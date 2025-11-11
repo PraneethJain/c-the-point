@@ -2,7 +2,10 @@
 #import "@preview/fletcher:0.5.8" as fletcher: diagram, node, edge
 #import "graph-fns.typ": mkgraph, program-trace
 
-= C the Point: Making sense of pointers in C
+#let eqmod(x) = $attach(=, b: #x)$
+#let neqmod(x) = $attach(!=, b: #x)$
+
+= Now you C the point!: Making sense of pointers in C
 
 == Background:  Why are C pointers hard to understand?
 
@@ -15,25 +18,26 @@ our understanding of how C manipulates pointers.
 
 == The unintuitive syntax of C
 
-The first unintuitive thing in C, is that the type of a variable is
-written _before_ the name of the variable.  So, C insists that we
-write `int x` instead of the more intuitive `x int`.  It gets worse
-when we have pointers.   So, `int *p` looks strange when compared to
-`p *int`.  One way to think of the type declaration for `p` is to
-consider navigating from `p` on a `*` and ending up at `int`.   This
-idea of navigation is central to the model we present but C's syntax
-doesn't quite align with this model of thinking. 
+C insists that we write `int x` instead of the more intuitive `x int`.
+It gets worse when we have pointers.  So, `int *p` looks strange when
+compared to `p *int`.  One way to think of the type declaration for
+`p` is to consider navigating from `p` on a `*` and end up at `int`.
+This idea of navigation is central to the model we present but C's
+syntax doesn't quite align with this model of thinking if we are used
+to reading things from left to right (which is the case with many
+Indo-European languages, but not scripts for Arabic, Persian, Urdu and
+Hebrew).
 
 == Traditional Box and pointer models of C
 
 Before we introduce the new model, let us consider one of the most
-common mental models employed by students of C programming.   It is
-called the _box and pointer_ model. 
+common mental models employed by students of C programming.  It is
+called the _box and pointer_ model.  In this model, boxes are memory
+locations and the boxes contain values.
 
-In this model, boxes are memory locations and the boxes contain
-values.  Unfortunately, the box and pointer diagram fails to capture
-adequate information to yield an unambiguous answer.  Here's an
-example, the C statement `int x = 5` is represented as the box diagram
+=== Example 1: Conflating a variable with its address
+Consider the the C statement `int x = 5` is represented as the box
+diagram
 
 #diagram(
   spacing: 5em,
@@ -44,40 +48,152 @@ example, the C statement `int x = 5` is represented as the box diagram
   node((rel: (0, -0.3), to: <A>), [x], stroke: none, fill: none),
 )
 
-This states that the meaning of `x` is the box.  Notice that the box
-itself is labeled `x`.  This results in conflating `x` with its
-address, so, there is no way to denote `&x`, which is another value,
-namely the address of `x`.
+Notice that the box (an address) is itself labeled `x`.  This results
+in conflating `x` with its address, so, there is no way to distinguish
+`x` from `&x`, namely the address of `x`.  So, `printf("%p", &x);`
+will print a value that is neither `x` nor `5`.
 
-This
-notation conflates the variable `x` with the box (or address) it
-denotes because the addre Adding the statement `int *p = &x;` results
-in the following diagram: Now, to find the value of `*p`, we follow
-the pointer in the box labeled `p`.  This takes us to the box
-containing 5.  The value of `*p` is therefore 5.  This looks fine
-until we add
+=== Example 2: Reasoning with equality violated
 
-#diagram(
-  spacing: 5em,
-  node-stroke: 1pt,
-  node-fill: none,
+Here is another example: Now consider the C fragment ```c int x = 5;
+int y = 5;```.  Clearly, `x` and `y` both now denote the value 5.
+We write this as $x eqmod(c) y$.  Now think of `&` as an operator,
+that takes a value and returns its address.  So `&x` returns the
+address of `x`.  So we have $x eqmod(c) y$ but $\&x neqmod(c) \&y$.
+This is counter-intuitive to logical reasoning because it violates the
+priniciple of substitution: when $e_1=e_2$, then if we any expression
+containing $e_1$, replacing $e_1$ with $e_2$ should make no
+difference.
 
-  node((0,0), [5], name: <A>, width: 4em, height: 2em),
-  node((rel: (0, -0.3), to: <A>), [x], stroke: none, fill: none),
+== Path Model
 
-  node((1,0), [], name: <B>, width: 4em, height: 2em, layer: -1),
-  node((rel: (0, -0.3), to: <B>), [p], stroke: none, fill: none),
+The alternative mental model we propose is motivated by the need to be
+able to do simple mathematical reasoning involving function
+application and mathematical equality.  Our mental models are now
+represented as labelled directed graphs.  A graph is simply a
+collection of vertices and an edge relation between vertices.  In
+addition, each edge is labelled.  Reasoning corresponds to traversing
+paths in the graph.
+
+For the sake of simplicity, let us assume we only have `int` the
+primitive type.  
+
+ 1. There are three kinds of vertices: variable vertices, addresses
+ vertices and value vertices.
+ 
+ 2. Values vertices are integer value vertices or addresses value
+ vertices.  There could be multiple vertices with the same value.
+
+ 3. Uninitialized values are denoted by $bot$.
+
+ 4. There is an arrow labelled `&` between a variable node and its
+ address.
+
+ 5. There is an arrow labelled `*` between the address and its value.
+ The `*`-labelled arrow captures the relation that an address _stores_
+ a value.
+
+ 6. There is a back arrow labelled `&` between the value and
+ its address.  A `&`-labelled  arrow captures the relation that a
+ value is stored in an address.  
+
+ 7. A value may occur multiple times stored at different addresses.
+
+ 8. There is a derived edge labelled `r` which is the composition of
+ the `&` and the `*` edges.
+
+ 9. The labels on arrows may be thought of as maps that take the
+ (tail) of the arrow to its head.  
 
 
-  edge(<B>, <A>, "->", layer: 1, snap-to: (none, auto))
-)
+The memory graph evolves as the C program statements execute.
 
-Now, imagine we wish to derive the  value of `*p`, which is 5.  For
-this, we would start from `p`, then go to the box it points to, pick
-up the value in the box, namely $a_x$, and then go to $x$
+The best way to understand the path model is through
+examples
+
+// Coming to pointers, adding the statement `int *p = &x;` results in the
+// following diagram:
+
+// #diagram(
+//   spacing: 5em,
+//   node-stroke: 1pt,
+//   node-fill: none,
+
+//   node((0,0), [5], name: <A>, width: 4em, height: 2em),
+//   node((rel: (0, -0.3), to: <A>), [x], stroke: none, fill: none),
+
+//   node((1,0), [], name: <B>, width: 4em, height: 2em, layer: -1),
+//   node((rel: (0, -0.3), to: <B>), [p], stroke: none, fill: none),
 
 
-== Example 1
+//   edge(<B>, <A>, "-|>", layer: 1, snap-to: (none, auto))
+// )
+
+// Now, imagine we wish to derive the  value of `*p`, which is 5.  For
+// this, we would start from `p`, then go to the box it refers to and
+// follow the pointer in the box, then go to content of the box.   Now
+// consider the C expression `&*p`, which is equal to `&x`.  
+
+
+== Example 3: Executing a simple fragment of code
+
+Consider the program fragment.
+
+```c int x; x=5 ```
+
+The initial graph has three nodes: the variable x, its address $a_x$
+and the (initial) value bottom.
+
+#mkgraph((x: (val: "bot")))
+
+
+
+
+== Example 3: 
+
+```c
+int x = 5, y = 7;
+int *p = &x;
+*p = y;
+```
+
+
+#program-trace((
+  (
+    code: "",
+    vars: (
+      x: (val: "bot"),
+      y: (val: "bot"),
+      p: (val: "bot"),
+    )
+  ),
+  (
+    code: "int x = 5, y = 7;",
+    vars: (
+      x: (val: 5),
+      y: (val: 7),
+      p: (val: "bot"),
+    )
+  ),
+  (
+    code: "int *p = &x;",
+    vars: (
+      x: (val: 5),
+      y: (val: 7),
+      p: (val: "a_x", points-to: "a_x"),
+    )
+  ),
+  (
+    code: "*p = y;",
+    vars: (
+      x: (val: 7),
+      y: (val: 7),
+      p: (val: "a_x", points-to: "a_x"),
+    )
+  ),
+))
+
+== Example 3
 
 ```c
 int x = 10, y = 20;
@@ -154,51 +270,8 @@ q = p;
   ),
 ))
 
-== Example 2
 
-```c
-int x = 5, y = 7;
-int *p = &x;
-*p = y;
-```
-
-
-#program-trace((
-  (
-    code: "",
-    vars: (
-      x: (val: "bot"),
-      y: (val: "bot"),
-      p: (val: "bot"),
-    )
-  ),
-  (
-    code: "int x = 5, y = 7;",
-    vars: (
-      x: (val: 5),
-      y: (val: 7),
-      p: (val: "bot"),
-    )
-  ),
-  (
-    code: "int *p = &x;",
-    vars: (
-      x: (val: 5),
-      y: (val: 7),
-      p: (val: "a_x", points-to: "a_x"),
-    )
-  ),
-  (
-    code: "*p = y;",
-    vars: (
-      x: (val: 7),
-      y: (val: 7),
-      p: (val: "a_x", points-to: "a_x"),
-    )
-  ),
-))
-
-== Example 3
+== Example 4
 
 ```c
 int p[] = {2, 4, 6, 8};
@@ -305,7 +378,7 @@ int r = *(q + 2);
 ))
 
 
-== Example 4
+== Example 5
 
 ```c
 int s = 3;

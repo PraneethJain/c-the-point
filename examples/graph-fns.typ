@@ -12,8 +12,7 @@
     code += v + "[label=\"" + str(info.val) + "\"]\n"
     
     code += a + "[style=filled, fontcolor=\"#56B4E9\"]\n"  // Light blue
-    code += v + "[label=\"" + str(info.val) + "\", style=filled, fontcolor=\"#E69F00\"]\n"  // Orange
-     
+    code += v + "[label=\"" + str(info.val) + "\", style=filled, fontcolor=\"#A65F00\"]\n"  // Orange
 
     if "points-to" in info {
       code += v + " -> " + info.points-to + "[style=\"dashed\"];\n"
