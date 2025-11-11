@@ -1,0 +1,74 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{setspace}
+
+\setlength{\parindent}{0pt}
+
+\lstset{
+    language=C,
+    basicstyle=\ttfamily\small,
+    frame=single,
+    backgroundcolor=\color{gray!5},
+    showstringspaces=false,
+    columns=fullflexible
+}
+
+\begin{document}
+\begin{center}
+{\LARGE \bf C Pointer Questionnaire\par}
+\end{center}
+
+\vspace{1em}
+
+\noindent
+\textbf{Roll Number:} \underline{\hspace{5cm}} 
+\hfill
+\textbf{Time Allotted: 30 minutes}
+
+\vspace{1em}
+\hrule
+\vspace{1em}
+
+\textit{\textbf{Instructions:}} \\
+Each question consists of a snippet of code in the \textit{C} programming language. Your task is to create a clear representation of the code in an appropriate format (e.g., figures, text, etc.) in the space provided and use it to evaluate the output of the code.
+
+\section*{Question 1}
+\begin{lstlisting}
+int s = 3;
+int *temp = &s;
+int **p = &temp;
+int *q = *p;
+*q = 10;
+printf("%d %d %d\n", s, *temp, **p);
+\end{lstlisting}
+
+\vspace{33em}
+
+\section*{Question 2}
+\begin{lstlisting}
+int arr[] = {1, 2, 3, 4, 5};
+int *p = arr;
+*(p + 2) = *(p + 4);
+p++;
+printf("%d %d\n", *p, *(p + 2));
+\end{lstlisting}
+
+\vspace{48em}
+
+\section*{Question 3}
+\begin{lstlisting}
+char str1[] = "Hello";
+char str2[] = "World";
+char *p = str1;
+char *q = str2;
+p = q;
+*str2 = 'h';
+*(q+2) = 'v';
+printf("%s %s\n", p, str2);
+\end{lstlisting}
+
+\vspace{18em}
+
+\end{document}
