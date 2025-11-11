@@ -1,5 +1,5 @@
 #import "@preview/diagraph:0.3.6": *
-#import "@preview/cetz:0.4.2"
+#import "@preview/fletcher:0.5.8" as fletcher: diagram, node, edge
 #import "graph-fns.typ": mkgraph, program-trace
 
 = C the Point: Making sense of pointers in C
@@ -35,13 +35,14 @@ values.  Unfortunately, the box and pointer diagram fails to capture
 adequate information to yield an unambiguous answer.  Here's an
 example, the C statement `int x = 5` is represented as the box diagram
 
-#raw-render(```dot
-digraph {
- x -> b
- x[shape=text,color=none]
- b[shape=text,label=5]
- }
-```)
+#diagram(
+  spacing: 5em,
+  node-stroke: 1pt,
+  node-fill: none,
+
+  node((0,0), [5], name: <A>, width: 4em, height: 2em),
+  node((rel: (0, -0.3), to: <A>), [x], stroke: none, fill: none),
+)
 
 This states that the meaning of `x` is the box.  Notice that the box
 itself is labeled `x`.  This results in conflating `x` with its
@@ -56,30 +57,24 @@ the pointer in the box labeled `p`.  This takes us to the box
 containing 5.  The value of `*p` is therefore 5.  This looks fine
 until we add
 
+#diagram(
+  spacing: 5em,
+  node-stroke: 1pt,
+  node-fill: none,
+
+  node((0,0), [5], name: <A>, width: 4em, height: 2em),
+  node((rel: (0, -0.3), to: <A>), [x], stroke: none, fill: none),
+
+  node((1,0), [], name: <B>, width: 4em, height: 2em, layer: -1),
+  node((rel: (0, -0.3), to: <B>), [p], stroke: none, fill: none),
 
 
-#raw-render(```dot
-digraph {
-// x -> b
-// x[shape=text,color=none]
- b[shape=text,label=5]
- p -> c
- p[shape=text,color=none]
- c[shape=text,label="a_x"] 
- }
-```, xlabels:("b":"x"))
-
+  edge(<B>, <A>, "->", layer: 1, snap-to: (none, auto))
+)
 
 Now, imagine we wish to derive the  value of `*p`, which is 5.  For
 this, we would start from `p`, then go to the box it points to, pick
 up the value in the box, namely $a_x$, and then go to $x$
-
-
-
-
-
-
-
 
 
 == Example 1
