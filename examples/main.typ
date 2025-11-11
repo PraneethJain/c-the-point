@@ -559,3 +559,70 @@ int *p = q;
     ),
   ),
 ))
+
+== Example 9
+
+```c
+int p[] = {1, 2, 3};
+int x = *(p + 2);
+```
+
+
+#program-trace((
+  (
+    code: "",
+    vars: (
+      p: (val: "bot"),
+      x: (val: "bot"),
+    )
+  ),
+  (
+    code: "int p[] = {1, 2, 3};",
+    vars: (
+      p: (val: "m_0", points-to: "m_0"),
+      x: (val: "bot"),
+    ),
+    custom-nodes: (
+      (name: "m_0", label: "m_0"),
+      (name: "m_1", label: "m_1"),
+      (name: "m_2", label: "m_2"),
+
+      (name: "v_m_0", label: "1"),
+      (name: "v_m_1", label: "2"),
+      (name: "v_m_2", label: "3"),
+    ),
+    custom-edges: (
+      (from: "m_0", to: "m_1", label: "+1"),
+      (from: "m_1", to: "m_2", label: "+1"),
+
+      (from: "m_0", to: "v_m_0", label: "*"),
+      (from: "m_1", to: "v_m_1", label: "*"),
+      (from: "m_2", to: "v_m_2", label: "*"),
+    ),
+  ),
+  (
+    code: "int x = *(p + 2);",
+    vars: (
+      p: (val: "m_0", points-to: "m_0"),
+      x: (val: "3"),
+    ),
+    custom-nodes: (
+      (name: "m_0", label: "m_0"),
+      (name: "m_1", label: "m_1"),
+      (name: "m_2", label: "m_2"),
+
+      (name: "v_m_0", label: "1"),
+      (name: "v_m_1", label: "2"),
+      (name: "v_m_2", label: "3"),
+    ),
+    custom-edges: (
+      (from: "m_0", to: "m_1", label: "+1"),
+      (from: "m_1", to: "m_2", label: "+1"),
+
+      (from: "m_0", to: "v_m_0", label: "*"),
+      (from: "m_1", to: "v_m_1", label: "*"),
+      (from: "m_2", to: "v_m_2", label: "*"),
+    ),
+  ),
+))
+
