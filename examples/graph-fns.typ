@@ -1,18 +1,18 @@
 #import "@preview/diagraph:0.3.6": *
 
 #let mkgraph(vars, custom-nodes: (), custom-edges: ()) = {
-  let code = "digraph {\n  layout=neato\n  node[shape=circle, math=true]\n  edge[lmath=true, labeldistance=5.0]\n"
+  let code = "digraph {\n  layout=circo\n  node[fontsize=18, shape=text, color=none, math=true]\n  edge[lmath=true, labeldistance=2.0]\n"
   
   for (name, info) in vars {
     let a = "a_" + name
     let v = "v_" + name
-    code += name + " -> " + a + " [label=\"\\&\"];\n"
-    code += a + " -> " + v + " [label=\"*\"];\n"
-    code += name + " -> " + v + " [label=\"r\"];\n"
+    code += name + " -> " + a + " [headlabel=\"\\&\"];\n"
+    code += a + " -> " + v + " [headlabel=\"*\"];\n"
+    code += name + " -> " + v + " [headlabel=\"r\"];\n"
     code += v + "[label=\"" + str(info.val) + "\"]\n"
     
-    code += a + "[style=filled, fillcolor=\"#56B4E9\"]\n"  // Light blue
-    code += v + "[label=\"" + str(info.val) + "\", style=filled, fillcolor=\"#E69F00\"]\n"  // Orange
+    code += a + "[style=filled, fontcolor=\"#56B4E9\"]\n"  // Light blue
+    code += v + "[label=\"" + str(info.val) + "\", style=filled, fontcolor=\"#E69F00\"]\n"  // Orange
      
 
     if "points-to" in info {
