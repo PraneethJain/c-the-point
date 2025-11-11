@@ -149,7 +149,7 @@ and the (initial) value bottom.
 
 
 
-== Example 3: 
+== Example 4
 
 ```c
 int x = 5, y = 7;
@@ -193,7 +193,7 @@ int *p = &x;
   ),
 ))
 
-== Example 3
+== Example 5
 
 ```c
 int x = 10, y = 20;
@@ -271,7 +271,7 @@ q = p;
 ))
 
 
-== Example 4
+== Example 6
 
 ```c
 int p[] = {2, 4, 6, 8};
@@ -378,7 +378,7 @@ int r = *(q + 2);
 ))
 
 
-== Example 5
+== Example 7
 
 ```c
 int s = 3;
@@ -445,7 +445,7 @@ int *q = *p;
   ),
 ))
 
-== Example 5
+== Example 8
 
 ```c
 int q[] = {1, 2, 3, 4, 5};
