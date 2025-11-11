@@ -1,50 +1,86 @@
 #import "@preview/diagraph:0.3.6": *
+#import "@preview/cetz:0.4.2"
+#import "graph-fns.typ": mkgraph, program-trace
 
-#let mkgraph(vars, custom-nodes: (), custom-edges: ()) = {
-  let code = "digraph {\n  layout=neato\n  node[shape=circle, math=true]\n  edge[lmath=true, labeldistance=5.0]\n"
-  
-  for (name, info) in vars {
-    let a = "a_" + name
-    let v = "v_" + name
-    code += name + " -> " + a + " [label=\"\\&\"];\n"
-    code += a + " -> " + v + " [label=\"*\"];\n"
-    code += name + " -> " + v + " [label=\"r\"];\n"
-    code += v + "[label=\"" + str(info.val) + "\"]\n"
-    
-    code += a + "[style=filled, fillcolor=\"#56B4E9\"]\n"  // Light blue
-    code += v + "[label=\"" + str(info.val) + "\", style=filled, fillcolor=\"#E69F00\"]\n"  // Orange
-     
+= C the Point: Making sense of pointers in C
 
-    if "points-to" in info {
-      code += v + " -> " + info.points-to + "[style=\"dashed\"];\n"
-    }
-  }
+== Background:  Why are C pointers hard to understand?
 
-  for node in custom-nodes {
-    code += node.name + "[label=\"" + str(node.label) + "\"]\n"
-  }
-  
-  for edge in custom-edges {
-    let label-part = if "label" in edge { " [label=\"" + edge.label + "\"]" } else { "" }
-    code += edge.from + " -> " + edge.to + label-part + ";\n"
-  }
-  
-  code += "}"
-  render(code)
-}
+Many of us have struggled to understand pointers in C.  This can be
+attributed to at least two different reasons.  First, the syntax of C,
+specially when declaring pointers is awkward and unintuitive.  Second,
+most of us lack a robust mental model of C's semantics that represents
+our understanding of how C manipulates pointers.
 
-#let program-trace(states) = {
-  for (i, state) in states.enumerate() {
-    mkgraph(state.vars, custom-nodes: state.at("custom-nodes", default: ()), custom-edges: state.at("custom-edges", default: ()))
-    
-    if i < states.len() - 1 {
-      align(center)[
-        #text(size: 1em)[#sym.arrow.b] 
-        #states.at(i + 1).code
-      ]
-    }
-  }
-}
+
+== The unintuitive syntax of C
+
+The first unintuitive thing in C, is that the type of a variable is
+written _before_ the name of the variable.  So, C insists that we
+write `int x` instead of the more intuitive `x int`.  It gets worse
+when we have pointers.   So, `int *p` looks strange when compared to
+`p *int`.  One way to think of the type declaration for `p` is to
+consider navigating from `p` on a `*` and ending up at `int`.   This
+idea of navigation is central to the model we present but C's syntax
+doesn't quite align with this model of thinking. 
+
+== Traditional Box and pointer models of C
+
+Before we introduce the new model, let us consider one of the most
+common mental models employed by students of C programming.   It is
+called the _box and pointer_ model. 
+
+In this model, boxes are memory locations and the boxes contain
+values.  Unfortunately, the box and pointer diagram fails to capture
+adequate information to yield an unambiguous answer.  Here's an
+example, the C statement `int x = 5` is represented as the box diagram
+
+#raw-render(```dot
+digraph {
+ x -> b
+ x[shape=text,color=none]
+ b[shape=text,label=5]
+ }
+```)
+
+This states that the meaning of `x` is the box.  Notice that the box
+itself is labeled `x`.  This results in conflating `x` with its
+address, so, there is no way to denote `&x`, which is another value,
+namely the address of `x`.
+
+This
+notation conflates the variable `x` with the box (or address) it
+denotes because the addre Adding the statement `int *p = &x;` results
+in the following diagram: Now, to find the value of `*p`, we follow
+the pointer in the box labeled `p`.  This takes us to the box
+containing 5.  The value of `*p` is therefore 5.  This looks fine
+until we add
+
+
+
+#raw-render(```dot
+digraph {
+// x -> b
+// x[shape=text,color=none]
+ b[shape=text,label=5]
+ p -> c
+ p[shape=text,color=none]
+ c[shape=text,label="a_x"] 
+ }
+```, xlabels:("b":"x"))
+
+
+Now, imagine we wish to derive the  value of `*p`, which is 5.  For
+this, we would start from `p`, then go to the box it points to, pick
+up the value in the box, namely $a_x$, and then go to $x$
+
+
+
+
+
+
+
+
 
 == Example 1
 
