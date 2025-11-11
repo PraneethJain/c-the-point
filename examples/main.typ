@@ -139,7 +139,7 @@ examples
 
 Consider the program fragment.
 
-```c int x; x=5 ```
+```c int x; ```
 
 The initial graph has three nodes: the variable x, its address $a_x$
 and the (initial) value bottom.
@@ -193,6 +193,7 @@ int *p = &x;
   ),
 ))
 
+/*
 == Example 5
 
 ```c
@@ -559,8 +560,9 @@ int *p = q;
     ),
   ),
 ))
+*/
 
-== Example 9
+== Example 5
 
 ```c
 int p[] = {1, 2, 3};
