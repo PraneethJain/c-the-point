@@ -5,15 +5,16 @@
 #let eqmod(x) = $attach(=, b: #x)$
 #let neqmod(x) = $attach(!=, b: #x)$
 
-= Now you C the point!: Making sense of pointers in C
+= Now you C the point!:    Making sense of pointers in C
 
 == Background:  Why are C pointers hard to understand?
 
 Many of us have struggled to understand pointers in C.  This can be
 attributed to at least two different reasons.  First, the syntax of C,
-specially when declaring pointers is awkward and unintuitive.  Second,
-most of us lack a robust mental model of C's semantics that represents
-our understanding of how C manipulates pointers.
+is awkward and unintuitive.  This is acutely felt specially when
+declaring pointers.  Second, most of us lack a robust mental model of
+C's semantics that represents our understanding of how the machine
+that runs C represents and manipulates pointers.
 
 
 == The unintuitive syntax of C
