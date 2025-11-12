@@ -140,7 +140,7 @@ examples
 
 Consider the program fragment.
 
-```c int x; x=5 ```
+```c int x; ```
 
 The initial graph has three nodes: the variable x, its address $a_x$
 and the (initial) value bottom.
@@ -150,7 +150,7 @@ and the (initial) value bottom.
 
 
 
-== Example 3: 
+== Example 4
 
 ```c
 int x = 5, y = 7;
@@ -194,7 +194,8 @@ int *p = &x;
   ),
 ))
 
-== Example 3
+/*
+== Example 5
 
 ```c
 int x = 10, y = 20;
@@ -272,7 +273,7 @@ q = p;
 ))
 
 
-== Example 4
+== Example 6
 
 ```c
 int p[] = {2, 4, 6, 8};
@@ -379,7 +380,7 @@ int r = *(q + 2);
 ))
 
 
-== Example 5
+== Example 7
 
 ```c
 int s = 3;
@@ -446,7 +447,7 @@ int *q = *p;
   ),
 ))
 
-== Example 5
+== Example 8
 
 ```c
 int q[] = {1, 2, 3, 4, 5};
@@ -560,3 +561,71 @@ int *p = q;
     ),
   ),
 ))
+*/
+
+== Example 5
+
+```c
+int p[] = {1, 2, 3};
+int x = *(p + 2);
+```
+
+
+#program-trace((
+  (
+    code: "",
+    vars: (
+      p: (val: "bot"),
+      x: (val: "bot"),
+    )
+  ),
+  (
+    code: "int p[] = {1, 2, 3};",
+    vars: (
+      p: (val: "m_0", points-to: "m_0"),
+      x: (val: "bot"),
+    ),
+    custom-nodes: (
+      (name: "m_0", label: "m_0"),
+      (name: "m_1", label: "m_1"),
+      (name: "m_2", label: "m_2"),
+
+      (name: "v_m_0", label: "1"),
+      (name: "v_m_1", label: "2"),
+      (name: "v_m_2", label: "3"),
+    ),
+    custom-edges: (
+      (from: "m_0", to: "m_1", label: "+1"),
+      (from: "m_1", to: "m_2", label: "+1"),
+
+      (from: "m_0", to: "v_m_0", label: "*"),
+      (from: "m_1", to: "v_m_1", label: "*"),
+      (from: "m_2", to: "v_m_2", label: "*"),
+    ),
+  ),
+  (
+    code: "int x = *(p + 2);",
+    vars: (
+      p: (val: "m_0", points-to: "m_0"),
+      x: (val: "3"),
+    ),
+    custom-nodes: (
+      (name: "m_0", label: "m_0"),
+      (name: "m_1", label: "m_1"),
+      (name: "m_2", label: "m_2"),
+
+      (name: "v_m_0", label: "1"),
+      (name: "v_m_1", label: "2"),
+      (name: "v_m_2", label: "3"),
+    ),
+    custom-edges: (
+      (from: "m_0", to: "m_1", label: "+1"),
+      (from: "m_1", to: "m_2", label: "+1"),
+
+      (from: "m_0", to: "v_m_0", label: "*"),
+      (from: "m_1", to: "v_m_1", label: "*"),
+      (from: "m_2", to: "v_m_2", label: "*"),
+    ),
+  ),
+))
+
