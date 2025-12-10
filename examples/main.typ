@@ -5,39 +5,70 @@
 #let eqmod(x) = $attach(=, b: #x)$
 #let neqmod(x) = $attach(!=, b: #x)$
 
-= Now you C the point!: Making sense of pointers in C
+= Now you C the point!:    Making sense of pointers in C
 
 == Background:  Why are C pointers hard to understand?
 
-Many of us have struggled to understand pointers in C.  This can be
-attributed to at least two different reasons.  First, the syntax of C,
-specially when declaring pointers is awkward and unintuitive.  Second,
-most of us lack a robust mental model of C's semantics that represents
-our understanding of how C manipulates pointers.
+To understand a C program, one needs to be equipped with a
+clear mental model of how memory is represented and
+manipulated by the program.  The model need not be exactly
+how memory is represented in hardware.  Instead, it suffices
+to build a symbolic or visual, but robust model of memory.
+
+
+Without a clear mental model, understanding pointers can be
+tricky.  The beginning student of C is also burdened with at
+least least two other hurdles: C's awkward syntax and its
+confusing semantics.  The field of semantics is concerned
+with building _mental models_ of how a program runs, and, in
+the case of C, how it represents and manipulates memory.  So
+far, it has been considered hard to build and visualise
+clear mental models of C programs and there is no standard
+way of doing so.  This is particularly acutely felt when
+declaring and using pointers.
 
 
 == The unintuitive syntax of C
 
-C insists that we write `int x` instead of the more intuitive `x int`.
-It gets worse when we have pointers.  So, `int *p` looks strange when
-compared to `p *int`.  One way to think of the type declaration for
-`p` is to consider navigating from `p` on a `*` and end up at `int`.
-This idea of navigation is central to the model we present but C's
-syntax doesn't quite align with this model of thinking if we are used
-to reading things from left to right (which is the case with many
-Indo-European languages, but not scripts for Arabic, Persian, Urdu and
-Hebrew).
+Consider the declaration `int x`.  We would like to think of `int` as
+the set of all integers and `x` as a variable denoting a member of
+that set, in which case `x int` would make more sense.  It gets worse
+when we have pointers.  How do we interpret `int *p`?  One way is to
+consider navigating (again, right to left!) this declaration by
+starting from `p`, traversing the `*` and ending up at `int`.  This
+idea of navigation is central to the model we present, but unless
+carefully defined, it doesn't always work!
+
+
+== C violates basic reasoning with equality
+
+Here is an example that shows how simple equational reasoning fails
+in C.  Consider the C fragment
+
+```c int x = 5;
+int y = 5;```
+
+Clearly, `x` and `y` both now denote the value 5 according
+to the semantics of C.  We write this as $x eqmod(C) y$.
+Now think of `&` as an operator, that takes a variable and
+returns its address.  So `&x` returns the address of `x`.
+So we have $x eqmod(C) y$ but $\&x neqmod(C) \&y$.  This is
+counter-intuitive because it violates a fundamental
+principle of mathematical reasoning:
+
+*Principle of Substitution*: If $e_1=e_2$, then, in any expression $e$
+containing $e_1$, replacing $e_1$ with $e_2$ in $e$ should make no
+difference.
+
+
 
 == Traditional Box and pointer models of C
 
-Before we introduce the new model, let us consider one of the most
-common mental models employed by students of C programming.  It is
-called the _box and pointer_ model.  In this model, boxes are memory
-locations and the boxes contain values.
-
-=== Example 1: Conflating a variable with its address
-Consider the the C statement `int x = 5` is represented as the box
-diagram
+The traditional mental model for C is called the _box and
+pointer_ model.  In this model, boxes are memory locations
+and the boxes contain values.  However, this model has its
+own problems, as illustrated by the following example.  The
+C statement `int x = 5;` is represented as the box diagram
 
 #diagram(
   spacing: 5em,
@@ -49,67 +80,88 @@ diagram
 )
 
 Notice that the box (an address) is itself labeled `x`.  This results
-in conflating `x` with its address, so, there is no way to distinguish
+in conflating `x` with its address.  There is no way to distinguish
 `x` from `&x`, namely the address of `x`.  So, `printf("%p", &x);`
-will print a value that is neither `x` nor `5`.
+will print a value that is neither `x` nor `5`.   
 
-=== Example 2: Reasoning with equality violated
+== Graph Model
 
-Here is another example: Now consider the C fragment ```c int x = 5;
-int y = 5;```.  Clearly, `x` and `y` both now denote the value 5.
-We write this as $x eqmod(c) y$.  Now think of `&` as an operator,
-that takes a value and returns its address.  So `&x` returns the
-address of `x`.  So we have $x eqmod(c) y$ but $\&x neqmod(c) \&y$.
-This is counter-intuitive to logical reasoning because it violates the
-priniciple of substitution: when $e_1=e_2$, then if we any expression
-containing $e_1$, replacing $e_1$ with $e_2$ should make no
-difference.
+We propose a new mental model for understanding pointers in
+C.  This model is motivated by the need to be able to do
+simple mathematical reasoning involving function application
+and mathematical equality.  Our mental models are now
+represented as _graphs_.
 
-== Path Model
+=== Graphs and Functions
 
-The alternative mental model we propose is motivated by the need to be
-able to do simple mathematical reasoning involving function
-application and mathematical equality.  Our mental models are now
-represented as labelled directed graphs.  A graph is simply a
-collection of vertices and an edge relation between vertices.  In
-addition, each edge is labelled.  Reasoning corresponds to traversing
-paths in the graph.
+A graph is simply a collection of vertices and arrows between the
+vertices.  In addition, each vertex and arrow is labelled.  Graphs are
+used to represent a variety of things in computer science.  We use a
+graph to represent function application.  So, if $f(x) = y$, then this
+is represented as an arrow from $x$ to $y$ labelled $f$.
 
-For the sake of simplicity, let us assume we only have `int` the
-primitive type.  
+A path corresponds to a composition of function applications.
 
- 1. There are three kinds of vertices: variable vertices, addresses
- vertices and value vertices.
+
+The state of the memory is modelled as a graph.  This graph
+evolves as each statement is executed.  The model may be
+described by the following set of rules (To keep our model
+simple, let us assume we only have `int` as the primitive
+type)
+
+ 1. *Vertices:* Vertices have labels.  There could be multiple vertices
+    with the same label.
+
+ 2. *Vertex labels:* A vertex label is one of the following:
+      - _Variable_:  $x,y, z, p$, etc.
+	  - _Value_: one of 
+	  - _Variable address_:   $a_x$, $a_y$, etc.
+	  - _Memory address_:  $m_0, m_1$, etc.
+	  - _Integer_:  $0, 1, -1$, etc.
+	  - _Undefined_: $bot$ (also called `bottom`)
+
+ 3. *Vertex classification:* Vertices are classified into
  
- 2. Values vertices are integer value vertices or addresses value
- vertices.  There could be multiple vertices with the same value.
+     - *Variable vertex:* a vertex whose label is a variable.
+	 
+	 - *Address vertex:* a vertex which is the source of a `*` arrow.  It
+       is labelled either by a variable or a memory address.
+	   
+	 - *Value vertex:* a vertex which is the destination of a `*` arrow.
+       It is by a value label (See 6.)
 
- 3. Uninitialized values are denoted by $bot$.
+ 3. *Variable vertices represent program variables*: For every program
+    variable $x$, there is a unique variable vertex, whose label is $x$.
 
- 4. There is an arrow labelled `&` between a variable node and its
- address.
+ 5. *& Forward Arrow and Variable Address vertices:* For every variable
+    vertex labelled $x$, there is an edge labelled `&` emanating from
+    that vertex to a unique address vertex labelled with the address
+    $a_x$.  Such a vertex, which is the destination of a `&` forward
+    arrow is called a _variable address vertex_.  
 
- 5. There is an arrow labelled `*` between the address and its value.
- The `*`-labelled arrow captures the relation that an address _stores_
- a value.
+ 6. *Value label:* A value label is either an integer, a variable
+     address, a memory address, or undefined ($bot$).
 
- 6. There is a back arrow labelled `&` between the value and
- its address.  A `&`-labelled  arrow captures the relation that a
- value is stored in an address.  
+ 7. * `*` Arrow and Address Vertices:* There is an arrow labelled `*`
+     from every address vertex to a value vertex.  This models the
+     intuition that the address _stores_ a value.
 
- 7. A value may occur multiple times stored at different addresses.
+ 8. * `&` Back Arrow:* for every arrow labelled `*` there is a _back_
+    arrow labelled `&` from the value vertex to the corresponding
+    address vertex.  This captures the notion that the value is
+    contained or pointed to by the address.  *To reduce clutter, this
+    arrow is not displayed.*
 
- 8. There is a derived edge labelled `r` which is the composition of
- the `&` and the `*` edges.
+ 9. * => Arrow:* For each value vertex labelled with an address, there
+    is an edge labelled `=>` to an address vertex with the same label.
 
- 9. The labels on arrows may be thought of as maps that take the
- (tail) of the arrow to its head.  
+ 10. * `r` Arrow:* For every variable there is an arrow from the variable
+    labelled `r` to a value vertex, obtained as the composition of the
+    arrows `&` and `*`.  This denotes the notion that a variable has a
+    value.
 
-
-The memory graph evolves as the C program statements execute.
-
-The best way to understand the path model is through
-examples
+The memory graph evolves as the C program statements
+execute.  The best way to understand the path model is through examples.
 
 // Coming to pointers, adding the statement `int *p = &x;` results in the
 // following diagram:
@@ -135,21 +187,21 @@ examples
 // consider the C expression `&*p`, which is equal to `&x`.  
 
 
-== Example 3: Executing a simple fragment of code
+== Example 1: A simple declaration
 
-Consider the program fragment.
+Consider the program fragment
 
 ```c int x; ```
 
 The initial graph has three nodes: the variable x, its address $a_x$
-and the (initial) value bottom.
+and the (initial) value `undefined`.   
 
 #mkgraph((x: (val: "bot")))
 
+Note the single variable address vertex is denoted in blue.
 
 
-
-== Example 4
+== Example 2: Pointer declaration, address-of and  assignment
 
 ```c
 int x = 5, y = 7;
@@ -157,6 +209,8 @@ int *p = &x;
 *p = y;
 ```
 
+As the initial step, small triangular graphs created for the
+declarations of each program variable: `x`, `y` and `p`.
 
 #program-trace((
   (
@@ -194,7 +248,7 @@ int *p = &x;
 ))
 
 /*
-== Example 5
+== Example 3
 
 ```c
 int x = 10, y = 20;
@@ -272,7 +326,7 @@ q = p;
 ))
 
 
-== Example 6
+== Example 4
 
 ```c
 int p[] = {2, 4, 6, 8};
@@ -379,7 +433,7 @@ int r = *(q + 2);
 ))
 
 
-== Example 7
+== Example 5
 
 ```c
 int s = 3;
@@ -446,7 +500,7 @@ int *q = *p;
   ),
 ))
 
-== Example 8
+== Example 6
 
 ```c
 int q[] = {1, 2, 3, 4, 5};
@@ -562,7 +616,7 @@ int *p = q;
 ))
 */
 
-== Example 5
+== Example 3
 
 ```c
 int p[] = {1, 2, 3};
