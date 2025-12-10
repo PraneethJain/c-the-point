@@ -1,0 +1,20 @@
+\documentclass{article}
+\usepackage{biblatex}
+\usepackage[
+  colorlinks=true,
+  linkcolor=blue,
+  citecolor=blue,
+  urlcolor=blue
+]{hyperref}
+
+\addbibresource{references.bib}
+
+\DeclareFieldFormat{url}{\newline\url{#1}}
+
+\begin{document}
+
+\nocite{*}
+
+\printbibliography[title={References for C-the-point}]
+
+\end{document}
