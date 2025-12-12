@@ -1,0 +1,259 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+
+% Adjust margins
+\geometry{top=0.8in, bottom=0.7in, left=0.7in, right=0.7in}
+
+% Simple title format with reduced spacing
+\makeatletter
+\renewcommand{\maketitle}{
+  \begin{center} 
+    {\LARGE\bfseries \@title \par}
+  \end{center}
+  \vspace{-1em} % tighten space after title
+}
+\makeatother
+
+\title{A Brief Literature Review on Errors \& Misconceptions in C Programming, and effective interventions}
+
+\begin{document}
+
+\maketitle
+
+\section*{Paper 1: Common Logic Errors for Programming Learners (2021) \hyperref[ref:1]{[1]}}
+This survey reviewed 47 publications from 1985--2018, identifying 166 common logic errors, many of which are relevant to C programming. Errors were classified into 11 categories:
+\begin{itemize}
+    \item \textbf{Variables}: Uninitialized variables, wrong data types, misuse in I/O operations.  
+    \item \textbf{Computation}: Integer division instead of floating-point, misuse of operators, incorrect precedence.  
+    \item \textbf{Conditions}: Confusing \texttt{=} and \texttt{==}, missing logical operators (\texttt{\&\&}, \texttt{||}), improper boolean usage.  
+    \item \textbf{Loops}: Off-by-one errors, infinite loops, incorrect initialization or update of loop counters.  
+    \item \textbf{Arrays}: Out-of-bounds access, indexing errors, incomplete initialization.  
+    \item \textbf{Functions}: Ignoring return values, missing return statements in non-void functions, parameter mismatches.  
+\end{itemize}
+
+Although the paper provides a broad literature survey, it often lacks detailed contextual information such as the exact programming language or course settings in which the data were collected. Despite this limitation, many of the highlighted logic errors are language-agnostic and map directly to issues frequently encountered in C programming. For example, integer division mistakes, off-by-one loop errors, and ignoring return values are both common and time-consuming to fix in C.
+
+\section*{Paper 2: Catalogs of C and Python Antipatterns by CS1 Students (2021) \hyperref[ref:2]{[2]}}
+This study analyzed code submissions from students in a distance-learning course to identify recurring \textit{antipatterns} in C and Python.  
+\begin{itemize}
+    \item Identified 95 misconceptions in C, with 21 consolidated as common antipatterns.  
+    \item Frequent issues included:
+    \begin{itemize}
+        \item \textbf{Input/Output}: Misuse of \texttt{scanf}/\texttt{printf}, incorrect use of \texttt{\&} in \texttt{scanf}, missing format specifiers.  
+        \item \textbf{Arithmetic}: Integer division mistakes, uninitialized variables, incorrect formulas.  
+        \item \textbf{Control structures}: Misplaced braces, dangling \texttt{else}, extra semicolons.  
+        \item \textbf{Functions}: Missing or incorrect return statements, parameter mismatches.  
+        \item \textbf{Style}: Poor indentation, naming, or unnecessary redundancy.  
+    \end{itemize}
+\end{itemize}
+
+\noindent \textbf{Pointer / address-related notes:}
+\begin{itemize}
+    \item Missing \texttt{\&} in front of variable in \texttt{scanf} (program crashes or reads garbage).  
+    \item Using \texttt{\&} in \texttt{printf}, printing the address instead of the value.  
+    \item Using \texttt{\&} instead of \texttt{\%} in format specifiers.  
+    \item Printing uninitialized variables (garbage from memory).  
+\end{itemize}
+
+\noindent A screenshot of the complete C antipattern list from the paper can be included below:
+
+\begin{center}
+    \includegraphics[width=0.9\textwidth]{images/c_antipatterns.png}
+    \\[0.5em]
+    \textit{Figure: C antipatterns from Paper 2}
+\end{center}
+
+\section*{Paper 3: Common Logic Errors Made by Novice Programmers (2018) \hyperref[ref:3]{[3]}}
+This study analyzed over 15,000 student submissions from a first-year engineering programming course that taught MATLAB first and then C. The focus was exclusively on logic errors in the C portion of the course, providing a rich empirical dataset of errors specific to novice C programmers.  
+
+Errors were grouped into three categories:
+\begin{itemize}
+    \item \textbf{Algorithmic errors}: Flawed or incomplete algorithms, e.g., not handling equal values when finding the maximum.  
+    \item \textbf{Misinterpretation errors}: Misunderstanding task requirements, e.g., returning 0 instead of -1 when a search fails.  
+    \item \textbf{Misconceptions}: Fundamental misunderstandings of C programming, e.g., array indexing or uninitialized variables.  
+\end{itemize}
+
+\noindent \textbf{Key recurring C-related misconceptions included:}
+\begin{itemize}
+    \item Integer division truncates results unless explicitly cast to double.  
+    \item Assuming uninitialized variables default to 0 rather than containing indeterminate garbage values.  
+    \item Off-by-one errors in array traversal, such as using \texttt{<=} instead of \texttt{<} in for loop conditions.  
+    \item Forgetting that array indexing in C starts at 0, leading to out-of-bounds errors.  
+    \item Misuse of \texttt{printf} instead of returning values, confusing side effects with function outputs.  
+\end{itemize}
+
+\noindent \textbf{Pointer / memory-related notes:}
+\begin{itemize}
+    \item Out-of-bounds array access often led to reading invalid memory, producing unpredictable garbage values or crashes.  
+    \item Accessing uninitialized variables exposed raw memory contents, reinforcing misconceptions about memory safety in C.  
+\end{itemize}
+
+\section*{Paper 4: Student Difficulties with Pointer Concepts in C (2016) \hyperref[ref:4]{[4]}}
+This study by Craig and Petersen analyzed difficulties students face with pointer concepts in C.  
+The authors built a taxonomy of pointer operations, then evaluated their difficulty using pre-/post-tests and coding exercises in a second-year systems programming course.  
+
+\subsection*{Methodology}
+\begin{itemize}
+    \item \textbf{Participants:} 341 students (second-year, prior experience in Python/Java).  
+    \item \textbf{Materials:} Lab with seven coding tasks and three multiple-choice (MC) questions.  
+    \item \textbf{Tests:} ``Select all that apply'' MC questions before and after the lab, covering assignment, dereferencing (LHS/RHS), symmetric dereference, arrays, and double pointers.  
+    \item \textbf{Analysis:} Compilation logs, abstract syntax trees, and error/warning messages were analyzed to identify misconceptions.  
+\end{itemize}
+
+\begin{center}
+    \includegraphics[width=0.7\textwidth]{images/pointer_hierarchy.png}
+    \\[0.5em]
+\end{center}
+
+\subsection*{Observations and Misconceptions}
+The results revealed consistent misconceptions about how pointers work in C:
+\begin{itemize}
+    \item \textbf{Relative concept difficulty:} Simple assignments without pointers (e.g., \texttt{v = w}) were easiest, while dereferencing operations were hardest. Surprisingly, students performed better on \texttt{*p = *p + i} (symmetric dereference) than on isolated LHS/RHS dereferences, suggesting alternative mental models.  
+    \item \textbf{Address vs. value confusion:} Students often omitted or misapplied the \texttt{\&} operator, treating variables and their addresses interchangeably.  
+    \item \textbf{Pointer-to-pointer complexity:} Declaring and using \texttt{char **} was highly error-prone, with fewer than 20\% succeeding on first attempt.  
+    \item \textbf{Arrays and pointers:} Common issues included assigning array elements directly to pointers (\texttt{int *back = a[4];}), off-by-one errors, and confusion about pointer arithmetic.  
+    \item \textbf{Function parameters:} Students frequently attempted to return values instead of modifying arguments via pointers, and tended to apply operators symmetrically to both parameters.  
+    \item \textbf{Compiler feedback:} Many ignored or misinterpreted warnings such as ``initialization makes pointer from integer without a cast,'' leading to more errors in subsequent attempts.  
+\end{itemize}
+
+\begin{center}
+    \includegraphics[width=0.9\textwidth]{images/q1_errors.png}
+    \\[0.5em]
+    \textit{Table: Frequent errors in declaring and assigning pointers}
+\end{center}
+
+\noindent In summary, the study found that even second-year students with prior programming experience struggle with core C pointer concepts. Misconceptions centered on confusing addresses with values, difficulty with dereferencing, and ineffective use of compiler messages. The findings emphasize the need for explicit teaching of memory models, targeted pointer exercises, and instruction on interpreting compiler output.
+
+\section*{Paper 5: Sometimes It’s Just Sloppiness – Studying Students' Programming Errors and Misconceptions (2020) \hyperref[ref:5]{[5]}}
+This paper analyzed 12,371 incorrect submissions from 280 students in an introductory C programming course, collected via the SmartAPE online tool. Each incorrect program was manually classified into one of six categories: \textbf{syntactic}, \textbf{conceptual}, \textbf{strategic}, \textbf{sloppiness}, \textbf{misinterpretation}, and \textbf{domain knowledge}. Unlike compiler-only analysis, this approach captured both trivial slips and deeper misconceptions. \\
+
+The results showed that nearly 17\% of errors were due to sloppiness (typos, missing semicolons, careless oversights), but a significant portion were conceptual or strategic, reflecting misunderstandings of C semantics and problem-solving strategies. Strategic errors often involved missing boundary cases or failing to plan problem structure. Lastly, some of the conceptual errors have been highlighted below. \\
+
+\noindent \textbf{Common conceptual/semantic C errors (from Top 50 list):}
+\begin{itemize}
+    \item Using \texttt{=} instead of \texttt{==} in conditions.  
+    \item Assuming uninitialized variables default to zero.  
+    \item Off-by-one errors in loops and array indexing.  
+    \item Confusion between pointers and array elements (e.g., assigning value instead of address).  
+    \item Missing \texttt{\&} in \texttt{scanf}, leading to crashes or garbage input.  
+    \item Misinterpreting operator precedence in expressions.  
+    \item Using wrong format specifiers in \texttt{printf}/\texttt{scanf}.  
+    \item Forgetting that arrays in C start at index 0.  
+    \item Returning values instead of modifying data through pointer parameters.  
+\end{itemize}
+
+\begin{center}
+    \includegraphics[width=0.8\textwidth]{images/top_50_errors.png} \\
+    \textit{Figure: Extract from the Top 50 student errors in C (adapted from Paper 4).}
+\end{center}
+
+\noindent Overall, the study stressed the importance of distinguishing superficial mistakes from fundamental misconceptions when providing feedback.
+
+\newpage \noindent \textbf{\Large Papers on Interventions:}
+
+\section*{Intelligent Learning Environments within Blended Learning for Ensuring Effective C Programming Course (2012) \hyperref[ref:6]{[6]}}
+
+This paper presents a blended learning approach that combines face-to-face instruction with e-learning, enhanced through intelligent learning environments integrated into the \textit{@KU-UZEM} Learning Management System. Two main tools were developed: \textbf{CTutor}, a problem-solving environment that evaluates students’ knowledge levels, provides feedback, and helps overcome misconceptions in C programming; and \textbf{ITest}, an adaptive assessment system that generates quizzes according to each student’s learning level. \\
+
+The model was applied to the \textit{C Programming} course at Afyon Kocatepe University over two academic terms, involving 120 students divided into experimental and control groups. The experimental group used the intelligent learning environments along with traditional classes, while the control group received only face-to-face instruction. \\
+
+\noindent \textbf{Survey Results:}  \\
+A post-course survey of 60 students assessed their acceptance of the blended model and attitude toward the intelligent environments. The majority of students expressed strong satisfaction: over 90\% agreed that the learning model was more effective than traditional approaches, 88\% found CTutor particularly helpful, and 87\% were satisfied with the e-learning activities overall. Students also reported improved self-confidence and motivation to study. \\ 
+
+\begin{center}
+    \includegraphics[width=0.65\textwidth]{images/survey_results.png}
+    \\[0.5em]
+\end{center}
+
+\noindent \textbf{Experimental Comparison:}  \\
+A comparative evaluation was conducted between the experimental and control groups. Results showed that students using the intelligent learning environments performed substantially better: \textbf{82\%} of students in the experimental group passed the course, compared to only \textbf{53\%} in the control group. The mean term grade for the experimental group was \textbf{79.5}, while the control group averaged \textbf{55.7}. Statistical analysis using an independent-samples t-test confirmed a significant difference between the two groups at a 95\% confidence level.
+
+\begin{center}
+    \includegraphics[width=0.7\textwidth]{images/comparison.png}
+    \\[0.5em]
+\end{center}
+
+\noindent \textbf{Limitations/Criticisms:}
+\begin{itemize}
+    \item The study was conducted at a single university and within one course, limiting the generalizability of its findings.  
+    \item The evaluation period covered only two academic terms, without long-term observation to measure sustained learning outcomes.  
+    \item Student feedback relied primarily on self-reported survey data, which may introduce subjective bias.  
+    \item The system architecture, involving CTutor, ITest, and multiple LMS modules, is considerably more complex than traditional instruction or standard program tracing, requiring additional technical setup, integration, and maintenance effort.  
+\end{itemize}
+
+\section*{Classroom practice for understanding pointers using learning support system for visualizing memory image and target domain world \hyperref[ref:7]{[7]}}
+
+This paper investigates the use of the TEDViT visualization system to improve learners’ understanding of pointers in C programming. The motivation for the study stems from the persistent difficulty novice programmers experience when learning pointer concepts, largely because existing visualization tools tend to obscure the actual memory locations and values of variables. TEDViT addresses this issue by providing simultaneous and synchronized visualizations of three key elements: the program code, the memory image displaying concrete variable states, and the target domain world representing logical data structures. \\
+
+\noindent The research involved fifteen software engineers with limited experience in C programming who attended four 90-minute training sessions organized by the Hamamatsu Embedded Programming Technology Consortium (HEPT). Each session integrated lectures, TEDViT-based observations, coding exercises, and instructor explanations, allowing participants to explore relationships among pointers, variables, and memory models.  \\
+
+\noindent Questionnaire results indicated high participant satisfaction and suggested that TEDViT enhanced comprehension of pointer behavior while helping to reduce unevenness in understanding among learners, thereby supporting more effective class management. However, the study’s limitations include a small participant sample, the absence of objective performance tests, and reliance solely on self-reported data. Additionally, since participants were professional engineers rather than students, the findings may not fully generalize to typical educational contexts. Despite these constraints, the authors conclude that TEDViT has significant potential as a visualization-based support tool for programming education, meriting further study through continued classroom applications.
+
+\section*{Pedagogy of Teaching Pointers in the C Programming Language using Graph Transformations \hyperref[ref:8]{[8]}}
+
+This paper proposes a new visual pedagogy for teaching the concept of pointers in the C programming language. The motivation stems from the persistent difficulty that students encounter in understanding pointer manipulation. The authors argue that visual learners benefit from graphical and dynamic representations rather than textual or static explanations, leading to the use of graph transformation systems as a pedagogical tool. \\
+
+The study involved undergraduate students enrolled in the \textit{Introduction to C Programming} course at the University of New Haven. The experimental group (Spring 2023) was taught pointers using visual simulations created with the GROOVE graph transformation tool, while the control groups (Spring 2022 and Fall 2022) were taught using traditional textbook-based methods. \\
+
+In the experimental setup, the GROOVE tool was employed to model and simulate pointer operations, using type graphs, transformation rules, and visual animations to represent relationships between pointers, addresses, and data objects. The instruction included slides, in-class demonstrations, and practice exercises that visually reinforced pointer behavior. \\
+
+The \textbf{type graph} defined in the study models basic C pointer structures by representing how pointers relate to memory addresses and objects such as \textit{int}, \textit{char}, and arrays. Each address node represents a memory cell, connected by \texttt{succ} edges to indicate consecutiveness. Pointers use \texttt{ref} edges to reference addresses, while addresses use \texttt{cont} edges to contain objects. Constraints on edges, such as ensuring every array has a single \texttt{fst} edge to its first pointer and each address having at most one successor, ensure the well-formedness of the model. This explicit modelling of addresses allows the representation of operations such as dereferencing (*) and address-of (\&) and the detection of errors such as dangling or null pointers.
+
+\begin{center}
+    \includegraphics[width=0.6\textwidth]{images/type_graph.png}
+    \\[0.5em]
+\end{center}
+
+Graph transformation rules encode the basic pointer operations in C. Each rule is represented as a combination of pre- and post-conditions integrated into a single graph with color-coded elements showing which parts are preserved, deleted, created, or forbidden. Examples include creating new pointers or integer objects, assigning addresses between pointers, or dereferencing pointer values. For instance, the rule that copies the value of the \texttt{int} referred to by a pointer into another object models the C statement \texttt{s = *pt;}.
+
+\begin{center}
+    \includegraphics[width=0.5\textwidth]{images/ptr_example.png}
+    \\[0.5em]
+    Example graph transformation rule modelling the statement \texttt{s = *pt;}
+\end{center}
+
+The results were evaluated through comparative test performance and survey responses. Using a value-added measure (VAM) analysis, the Spring 2023 class showed improved understanding and smaller negative VAM scores relative to earlier cohorts. Survey feedback indicated that students found the graphical approach helpful for visualizing memory and pointer relationships. \\
+
+However, the authors acknowledge limitations in the study’s statistical validity due to differences in student aptitude across cohorts and the small sample size. Moreover, the experiment only covered a subset of pointer operations and was limited to revision sessions rather than full-course integration. Future work aims to extend the rule set to include memory management functions, function calls, and distinctions between stack and heap memory, as well as to provide students with hands-on use of the GROOVE tool. 
+
+\section*{\noindent \textbf{\Large Where do we go from here?}}
+
+Based on the kinds of errors and misconceptions identified in the earlier papers (especially around pointers, addresses, and memory behaviour), it’s clear that many students still lack an accurate mental model of how C actually executes. Most existing interventions, like CTutor, TEDViT, or the GROOVE-based visualizations, do help with engagement and conceptual understanding, but I think they have limited semantic coverage or rely on complex setups that are difficult to replicate in a classroom. \\
+
+Since the idea is to bridge the gap between compiler-level behaviour and what students imagine happens when they run their programs, we could start with defining a simple set of execution semantics for a core subset of C—covering expressions, assignments, pointers, arrays, and function calls. We could either design these semantics ourselves or adapt them from existing verification tools such as CompCert, Cerberus, or the K Framework. \\
+
+Then we could implement a tool that runs programs step by step and shows corresponding state changes, as done with SimpliPy. Finally, we plan to test this system in a controlled classroom setting, comparing how students using the notional machine perform against those learning with traditional methods. Along with performance data, we’ll collect feedback on usability and conceptual clarity to refine the model further. \\
+
+What we want to study through this work is how such a system can improve students’ conceptual grasp of low-level C execution. Specifically, we aim to observe whether the notional machine helps learners:
+\begin{itemize}
+    \item form more accurate mental models of how pointers and memory interact,
+    \item identify and correct misconceptions early (for example, about dereferencing or address-of operations),
+    \item interpret compiler feedback in relation to runtime behavior, and
+    \item reason about program state changes more systematically during debugging.
+\end{itemize}
+
+We also hope to gather insights into how learners use visual feedback when reasoning about C code—whether it supports long-term retention, improves debugging skills, or changes how they think about code correctness. By comparing learning outcomes between groups that use the notional machine and those that follow traditional methods, we can measure how far visual execution modeling contributes to genuine conceptual understanding rather than surface-level recall.
+
+\section*{\noindent \textbf{\Large References:}}
+
+[1] \label{ref:1} \href{https://par.nsf.gov/servlets/purl/10329375}{Common Logic Errors for Programming Learners} \\
+
+\noindent [2] \label{ref:2} \href{https://arxiv.org/pdf/2104.12542}{Catalogs of C and Python Antipatterns by CS1 Students} \\
+
+\noindent [3] \label{ref:3} \href{https://dl.acm.org/doi/pdf/10.1145/3160489.3160493}{Common logic errors made by novice programmers} \\
+
+\noindent [4] \label{ref:4} \href{https://dl.acm.org/doi/pdf/10.1145/2843043.2843348}{Student Difficulties with Pointer Concepts in C} \\
+
+\noindent [5] \label{ref:5} \href{https://dl.acm.org/doi/pdf/10.1145/3328778.3366862}{Sometimes It’s Just Sloppiness – Studying Students’ Programming Errors and Misconceptions} \\
+
+\noindent [6] \label{ref:6} \href{http://arxiv.org/pdf/1205.2670}{Intelligent Learning Environments within Blended Learning for Ensuring Effective C Programming Course} \\
+
+\noindent [7] \label{ref:7} \href{https://link.springer.com/content/pdf/10.1186/s41039-017-0058-4.pdf}{Classroom practice for understanding pointers using learning support system for visualizing memory image and target domain world} \\
+
+\noindent [8] \label{ref:8} \href{https://arxiv.org/pdf/2503.20469}{Pedagogy of Teaching Pointers in the C Programming Language using Graph Transformations} \\
+
+\end{document}
