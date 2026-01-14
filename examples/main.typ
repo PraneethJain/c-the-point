@@ -201,6 +201,7 @@ and the (initial) value `undefined`.
 Note the single variable address vertex is denoted in blue.
 
 
+#pagebreak()
 == Example 2: Pointer declaration, address-of and  assignment
 
 ```c
@@ -246,8 +247,8 @@ declarations of each program variable: `x`, `y` and `p`.
     )
   ),
 ))
+#pagebreak()
 
-/*
 == Example 3
 
 ```c
@@ -325,6 +326,7 @@ q = p;
   ),
 ))
 
+#pagebreak()
 
 == Example 4
 
@@ -433,6 +435,7 @@ int r = *(q + 2);
 ))
 
 
+#pagebreak()
 == Example 5
 
 ```c
@@ -500,6 +503,7 @@ int *q = *p;
   ),
 ))
 
+#pagebreak()
 == Example 6
 
 ```c
@@ -614,9 +618,10 @@ int *p = q;
     ),
   ),
 ))
-*/
 
-== Example 3
+#pagebreak()
+
+== Example 7
 
 ```c
 int p[] = {1, 2, 3};
