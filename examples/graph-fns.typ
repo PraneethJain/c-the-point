@@ -1,18 +1,18 @@
 #import "@preview/diagraph:0.3.6": *
 
 #let mkgraph(vars, custom-nodes: (), custom-edges: ()) = {
-  let code = "digraph {\n  layout=neato\n node[fontsize=18, shape=circle,color=none, math=true]\n  edge[lmath=true]\n"
+  let code = "digraph {\n  layout=neato\n node[fontsize=18, shape=circle,math=true,fixedsize=true, width=0.55, height=0.55]\n  edge[lmath=true]\n"
   
   for (name, info) in vars {
     let a = "a_" + name
     let v = "v_" + name
     code += name + " -> " + a + " [headlabel=\"\\&\", labeldistance = 2.0];\n"
     code += a + " -> " + v + " [headlabel=\"*\", labeldistance = 2.3];\n"
-    code += name + " -> " + v + " [headlabel=\"r\", labeldistance = 2.5];\n"
+    code += v + " -> " + a + " [headlabel=\"\&\", labeldistance = 2.3];\n"
     code += v + "[label=\"" + str(info.val) + "\"]\n"
     
-    code += a + "[style=filled, fontcolor=\"#56B4E9\"]\n"  // Light blue
-    code += v + "[label=\"" + str(info.val) + "\", style=filled, fontcolor=\"#A65F00\"]\n"  // Orange
+    code += a + "[fontcolor=\"#56B4E9\"]\n"  // Light blue
+    code += v + "[label=\"" + str(info.val) + "\",  fontcolor=\"#A65F00\"]\n"  // Orange
 
     if "points-to" in info {
       code += v + " -> " + info.points-to + "[style=\"dashed\", headlabel=\"=>\", labeldistance = 2.4];\n"
