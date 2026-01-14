@@ -286,6 +286,11 @@ int r = *(q + 2);
       (from: "m_1", to: "v_m_1", label: "*"),
       (from: "m_2", to: "v_m_2", label: "*"),
       (from: "m_3", to: "v_m_3", label: "*"),
+
+      (from: "v_m_0", to: "m_0", label: "\&"),
+      (from: "v_m_1", to: "m_1", label: "\&"),
+      (from: "v_m_2", to: "m_2", label: "\&"),
+      (from: "v_m_3", to: "m_3", label: "\&"),
     ),
   ),
 ))
@@ -355,6 +360,12 @@ int *p = q;
       (from: "m_2", to: "v_m_2", label: "*"),
       (from: "m_3", to: "v_m_3", label: "*"),
       (from: "m_4", to: "v_m_4", label: "*"),
+
+      (from: "v_m_0", to: "m_0", label: "\&"),
+      (from: "v_m_1", to: "m_1", label: "\&"),
+      (from: "v_m_2", to: "m_2", label: "\&"),
+      (from: "v_m_3", to: "m_3", label: "\&"),
+      (from: "v_m_4", to: "m_4", label: "\&"),
     ),
   ),
 ))
@@ -392,6 +403,10 @@ int x = *(p + 2);
       (from: "m_0", to: "v_m_0", label: "*"),
       (from: "m_1", to: "v_m_1", label: "*"),
       (from: "m_2", to: "v_m_2", label: "*"),
+
+      (from: "v_m_0", to: "m_0", label: "\&"),
+      (from: "v_m_1", to: "m_1", label: "\&"),
+      (from: "v_m_2", to: "m_2", label: "\&"),
     ),
   ),
 ))
